@@ -4,6 +4,7 @@ from scrapy.crawler import CrawlerProcess
 import scrapy.crawler as crawler
 from twisted.internet import reactor
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 import time
 from multiprocessing import Process, Queue
 from scrapy.signalmanager import dispatcher
@@ -21,8 +22,8 @@ class coordinatesSpider(scrapy.Spider):
         self.url = f"https://www.google.co.nz/maps?hl=en&q={parsedPath}"
         options = webdriver.ChromeOptions()
         options.add_argument('headless')
-        self.driver = webdriver.Chrome(
-            executable_path="C:/Users/ellio/Downloads/chromedriver_91/chromedriver.exe", options=options)
+        chrome_service = Service("C:/ChromeDriver/96/driver.exe")
+        self.driver = webdriver.Chrome(service = chrome_service, options=options)
 
     def start_requests(self):
         yield scrapy.Request(url=self.url,  headers=self.headers, callback=self.parseResponse)
@@ -44,7 +45,9 @@ class coordinatesSpider(scrapy.Spider):
         details = details.split(',')
         latitude = details[0].replace('@', '')
         longitude = details[1]
+      
         coordinates = {'latitude': latitude, 'longitude': longitude}
+        print('coordinates', coordinates)
         return coordinates
 
 
@@ -121,3 +124,10 @@ def getCombined(location):
         raise result
     print(results)
     return results
+    
+    
+
+if __name__ == '__main__':
+  getCoordinates("Countdown AvonHead")
+    
+
